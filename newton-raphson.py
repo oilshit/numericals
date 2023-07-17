@@ -2,26 +2,25 @@
 ## used to get the root approximation of the
 ## real-valued function (wikipedia.org)
 
-import time
-
+import math
 import matplotlib.pyplot as plt
 
 def f(x):
     """
     define the y as a function of x
-    let say f(x) = x^2 - 6x - 16
+    let say f(x) = e^x - 5x^2
     """
 
-    return (x**2) - 6 * x - 16
+    return math.exp(x) - (5 * (x ** 2))
 
 def diff_f(x):
     """
     define the differential or derivative of y
     as a function of x
-    in case of y = f(x) = x^2 - 6x - 16, dy/dx = 2x - 6
+    in case of y = f(x) = e^x - 5x^2, dy/dx = e^x - 10x
     """
 
-    return 2 * x - 6
+    return math.exp(x) - (10 * x)
 
 def newton_raphson(x, fx, dfx):
     """
@@ -33,16 +32,17 @@ def newton_raphson(x, fx, dfx):
     return x - (fx / dfx)
 
 iter = 0
-epsilon = 0.000000001
-x0 = 25
+epsilon = 1E-15
+x0 = 1
 
-x = [i * 0.25 for i in range(-25, 100 + 1)]
-y = [f(i * 0.25) for i in range(-25, 100 + 1)]
+x = [i * 0.01 for i in range(-100, 100 + 1)]
+y = [f(i * 0.01) for i in range(-100, 100 + 1)]
 
-plt.plot(x, y, label="f(x) = x^2 - 6x - 16")
+plt.plot(x, y, label="f(x) = e^x - 5x^2")
 
 while (True):
-    x1 = newton_raphson(x0, f(x0), diff_f(x0))
+    dfx = (f(x0 + 1E-10) - f(x0)) / 1E-10
+    x1 = newton_raphson(x0, f(x0), dfx)
 
     if (abs(x1 - x0) < epsilon):
         break
@@ -50,22 +50,20 @@ while (True):
     iter += 1
     plt.plot([x0, x1], [f(x0), 0], label=("iter " + str(iter)))
     x0 = x1
-    
-    # print(x0)
-    # time.sleep(1)
+    plt.plot([x0, x0], [0, f(x0)], linestyle="dashed", color="black")
 
-print("x =", round(x0, 2), "with", iter, "iterations")
+print("x =", round(x0, 6), "with", iter, "iterations")
 print("Newton-Raphson iteration plotted")
 
-plt.title("Newton-Raphson Method\nfor x^2 - 6x - 16")
+plt.title("Newton-Raphson Method\nfor e^x - 5x^2")
 plt.xlabel("x")
-plt.xlim(0, 25)
-plt.ylim(0, f(25))
+plt.xlim(0, 1)
+plt.ylim(0, f(1))
 plt.ylabel("y = f(x)")
 
-plt.scatter(x0, f(x0), label=("x found: " + str(round(x0, 2))))
+plt.scatter(x0, f(x0), label=("x found: " + str(round(x0, 6))))
 
 plt.legend()
 
-# plt.show()
-plt.savefig("newton-raphson-result.png")
+plt.show()
+# plt.savefig("newton-raphson-result.png")
